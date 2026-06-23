@@ -44,7 +44,7 @@ limitations under the License.
 /* macro functions */
 #define RUN_CHECK(x)                                         \
   if (!(x)) {                                                \
-    fprintf(stderr, "Error at %s:%d\n", __FILE__, __LINE__); \
+    fprintf(stderr, "错误：%s:%d\n", __FILE__, __LINE__); \
     exit(1);                                                 \
   }
 

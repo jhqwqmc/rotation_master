@@ -1,10 +1,10 @@
 <!-- Original: https://github.com/emscripten-core/emscripten/blob/main/src/shell_minimal.html -->
 <!doctype html>
-<html lang="en-us">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Rotation Master</title>
+    <title>旋转大师</title>
     <style>
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
       textarea.emscripten { font-family: monospace; width: 80%; }
@@ -49,8 +49,8 @@
   </head>
   <body>
     <hr/>
-    <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
-    <div class="emscripten" id="status">Downloading...</div>
+    <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>加载中</strong></center></figure>
+    <div class="emscripten" id="status">下载中...</div>
     <div class="emscripten">
       <progress value="0" max="100" id="progress" hidden=1></progress>  
     </div>
@@ -59,10 +59,10 @@
     </div>
     <hr/>
     <div class="emscripten">
-      <input type="checkbox" id="resize">Resize canvas
-      <input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer
+      <input type="checkbox" id="resize">调整画布大小
+      <input type="checkbox" id="pointerLock" checked>锁定/隐藏鼠标指针
       &nbsp;&nbsp;&nbsp;
-      <input type="button" value="Fullscreen" onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked, 
+      <input type="button" value="全屏" onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked,
                                                                                 document.getElementById('resize').checked)">
     </div>
     
@@ -70,17 +70,7 @@
     <textarea class="emscripten" id="output" rows="8"></textarea>
     <hr>
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5VD9HS3ZYH"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-5VD9HS3ZYH');
-    </script>
-
-    <script type='text/javascript'>
+<script type='text/javascript'>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');
@@ -111,7 +101,7 @@
           // As a default initial behavior, pop up an alert when webgl context is lost. To make your
           // application robust, you may want to override this behavior before shipping!
           // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
-          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL 上下文已丢失，请重新加载页面。'); e.preventDefault(); }, false);
 
           return canvas;
         })(),
@@ -140,15 +130,15 @@
         totalDependencies: 0,
         monitorRunDependencies: function(left) {
           this.totalDependencies = Math.max(this.totalDependencies, left);
-          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+          Module.setStatus(left ? '准备中... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : '所有下载完成。');
         }
       };
-      Module.setStatus('Downloading...');
+      Module.setStatus('下载中...');
       window.onerror = function() {
-        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus('发生异常，请参阅 JavaScript 控制台');
         spinnerElement.style.display = 'none';
         Module.setStatus = function(text) {
-          if (text) Module.printErr('[post-exception status] ' + text);
+          if (text) Module.printErr('[异常后状态] ' + text);
         };
       };
     </script>

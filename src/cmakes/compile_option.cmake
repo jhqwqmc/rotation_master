@@ -21,7 +21,10 @@ if (EMSCRIPTEN)
         -s USE_WEBGL2=1 \
         -s FULL_ES3=1 \
         -s USE_GLFW=3 \
-        --shell-file ${CMAKE_CURRENT_LIST_DIR}/../../html_template/shell_minimal.html"
+        -s ALLOW_MEMORY_GROWTH=1 \
+        -s MAXIMUM_MEMORY=4GB \
+        --shell-file ${CMAKE_CURRENT_LIST_DIR}/../../html_template/shell_minimal.html \
+        --preload-file ${CMAKE_CURRENT_LIST_DIR}/../../assets/fonts/simhei.ttf@/assets/fonts/simhei.ttf"
     )
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -DNDEBUG")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")

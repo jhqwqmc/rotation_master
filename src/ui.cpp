@@ -65,6 +65,11 @@ Ui::Ui(Window& window)
 #else
     ImGui_ImplOpenGL3_Init("#version 130");
 #endif
+
+    /* imgui:  Load Chinese font with full CJK glyph range */
+    ImGuiIO& io_font = ImGui::GetIO();
+    io_font.Fonts->TexDesiredWidth = 4096;  // need larger atlas for full CJK
+    io_font.Fonts->AddFontFromFileTTF("assets/fonts/simhei.ttf", 16.0f, nullptr, io_font.Fonts->GetGlyphRangesChineseFull());
 }
 
 Ui::~Ui()
@@ -85,11 +90,11 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
     {
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
         ImGui::SetNextWindowSize(ImVec2(450.0f, static_cast<float>(window.GetHeight())), ImGuiCond_Once);
-        ImGui::Begin("Conversion", nullptr);
+        ImGui::Begin("转换", nullptr);
 
         /*** Input angles ***/
-        ImGui::RadioButton("Rotation Matrix", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::ROTATION_MATRIX));
-        if (ImGui::BeginTable("Rotation Matrix", 3)) {
+        ImGui::RadioButton("旋转矩阵##input_rotation_matrix", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::ROTATION_MATRIX));
+        if (ImGui::BeginTable("Rotation Matrix##input_table", 3)) {
             bool is_value_changed = false;
             for (int32_t row = 0; row < 3; row++) {
                 ImGui::TableNextRow();
@@ -106,8 +111,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::RadioButton("Rotation Vector", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::ROTATION_VECTOR));
-        if (ImGui::BeginTable("Rotation Vector", 3)) {
+        ImGui::RadioButton("旋转向量##input_rotation_vector", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::ROTATION_VECTOR));
+        if (ImGui::BeginTable("Rotation Vector##input_table", 3)) {
             bool is_value_changed = false;
             float val[3] = { angle_unit.Display(input_container.rotation_vector[0]), angle_unit.Display(input_container.rotation_vector[1]), angle_unit.Display(input_container.rotation_vector[2]) };
             ImGui::TableNextRow();
@@ -123,8 +128,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::RadioButton("Axis-angle", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::AXIS_ANGLE));
-        if (ImGui::BeginTable("Axis-angle", 4)) {
+        ImGui::RadioButton("轴角##input_axis_angle", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::AXIS_ANGLE));
+        if (ImGui::BeginTable("Axis-angle##input_table", 4)) {
             bool is_value_changed = false;
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0); ImGui::PushItemWidth(-FLT_MIN); is_value_changed |= ImGui::DragFloat("##x", &input_container.axis_angle[0], 0.005f, -1.0, 1.0f, "x: %.3f");
@@ -138,8 +143,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::RadioButton("Quaternion", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::QUATERNION));
-        if (ImGui::BeginTable("Quaternion", 4)) {
+        ImGui::RadioButton("四元数##input_quaternion", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::QUATERNION));
+        if (ImGui::BeginTable("Quaternion##input_table", 4)) {
             bool is_value_changed = false;
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0); ImGui::PushItemWidth(-FLT_MIN); is_value_changed |= ImGui::DragFloat("##x", &input_container.quaternion[0], 0.005f, -1.0, 1.0f, "x: %.3f");
@@ -151,8 +156,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::RadioButton("Euler Angles (Intrinsic; Mobile)", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::EULER_MOBILE));
-        if (ImGui::BeginTable("Euler Angles (Intrinsic; Mobile)", 4)) {
+        ImGui::RadioButton("欧拉角（内旋；移动）##input_euler_mobile", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::EULER_MOBILE));
+        if (ImGui::BeginTable("Euler Angles (Intrinsic; Mobile)##input_table", 4)) {
             bool is_value_changed = false;
             float val[3] = { angle_unit.Display(input_container.mobile_euler_angle[0]), angle_unit.Display(input_container.mobile_euler_angle[1]), angle_unit.Display(input_container.mobile_euler_angle[2]) };
             ImGui::TableNextRow();
@@ -168,8 +173,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::RadioButton("Euler Angles (Extrinsic; Fixed)", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::EULER_FIXED));
-        if (ImGui::BeginTable("Euler Angles (Extrinsic; Fixed)", 4)) {
+        ImGui::RadioButton("欧拉角（外旋；固定）##input_euler_fixed", &input_container.selected_representation_type, static_cast<int32_t>(REPRESENTATION_TYPE::EULER_FIXED));
+        if (ImGui::BeginTable("Euler Angles (Extrinsic; Fixed)##input_table", 4)) {
             bool is_value_changed = false;
             float val[3] = { angle_unit.Display(input_container.fixed_euler_angle[0]), angle_unit.Display(input_container.fixed_euler_angle[1]), angle_unit.Display(input_container.fixed_euler_angle[2]) };
             ImGui::TableNextRow();
@@ -188,8 +193,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         ImGui::Separator();
         ImGui::Separator();
 
-        ImGui::Text("Rotation Matrix");
-        if (ImGui::BeginTable("Rotation Matrix", 3)) {
+        ImGui::Text("旋转矩阵");
+        if (ImGui::BeginTable("Rotation Matrix##output_table", 3)) {
             for (int32_t row = 0; row < 3; row++) {
                 ImGui::TableNextRow();
                 for (int32_t col = 0; col < 3; col++) {
@@ -202,8 +207,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::Text("Rotation Vector");
-        if (ImGui::BeginTable("Rotation Vector", 3)) {
+        ImGui::Text("旋转向量");
+        if (ImGui::BeginTable("Rotation Vector##output_table", 3)) {
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0); ImGui::Text((std::string("  x: ") + angle_unit.GetAngleFormat()).c_str(), angle_unit.Display(output_container.rotation_vector[0]));
             ImGui::TableSetColumnIndex(1); ImGui::Text((std::string("y: ") + angle_unit.GetAngleFormat()).c_str(), angle_unit.Display(output_container.rotation_vector[1]));
@@ -212,8 +217,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::Text("Axis-angle");
-        if (ImGui::BeginTable("Axis-angle", 4)) {
+        ImGui::Text("轴角");
+        if (ImGui::BeginTable("Axis-angle##output_table", 4)) {
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0); ImGui::Text("  x: %.3f", output_container.axis_angle[0]);
             ImGui::TableSetColumnIndex(1); ImGui::Text("y: %.3f", output_container.axis_angle[1]);
@@ -223,8 +228,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::Text("Quaternion");
-        if (ImGui::BeginTable("Quaternion", 4)) {
+        ImGui::Text("四元数");
+        if (ImGui::BeginTable("Quaternion##output_table", 4)) {
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0); ImGui::Text("  x: %.3f", output_container.quaternion[0]);
             ImGui::TableSetColumnIndex(1); ImGui::Text("y: %.3f", output_container.quaternion[1]);
@@ -234,8 +239,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::Text("Euler Angles (Intrinsic; Mobile)");
-        if (ImGui::BeginTable("Euler Angles (Intrinsic; Mobile)", 4)) {
+        ImGui::Text("欧拉角（内旋；移动）");
+        if (ImGui::BeginTable("Euler Angles (Intrinsic; Mobile)##output_table", 4)) {
             for (int32_t i = 0; i < static_cast<int32_t>(sizeof(EULER_ORDER_STR) / sizeof(char*)); i++) {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0); ImGui::Text("%s", EULER_ORDER_STR[i]);
@@ -248,8 +253,8 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
         }
         ImGui::Separator();
 
-        ImGui::Text("Euler Angles (Extrinsic; Fixed)");
-        if (ImGui::BeginTable("Euler Angles (Extrinsic; Fixed)", 4)) {
+        ImGui::Text("欧拉角（外旋；固定）");
+        if (ImGui::BeginTable("Euler Angles (Extrinsic; Fixed)##output_table", 4)) {
             for (int32_t i = 0; i < static_cast<int32_t>(sizeof(EULER_ORDER_STR) / sizeof(char*)); i++) {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0); ImGui::Text("%s", EULER_ORDER_STR[i]);
@@ -269,51 +274,51 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
     {
         ImGui::SetNextWindowPos(ImVec2(width_window_conversion, 0));
         //ImGui::SetNextWindowSize(ImVec2(400.0f, 150.0f), ImGuiCond_Once);
-        ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+        ImGui::Begin("设置", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
         /*** Settings ***/
         int32_t dark_mode = setting_container.is_dark_mode ? 1 : 0;
-        ImGui::Text("Color:"); ImGui::SameLine();
-        ImGui::RadioButton("Dark", &dark_mode, 1); ImGui::SameLine();
-        ImGui::RadioButton("Bright", &dark_mode, 0); ImGui::SameLine();
+        ImGui::Text("颜色："); ImGui::SameLine();
+        ImGui::RadioButton("深色##dark", &dark_mode, 1); ImGui::SameLine();
+        ImGui::RadioButton("明亮##bright", &dark_mode, 0); ImGui::SameLine();
         setting_container.is_dark_mode = (dark_mode == 1);
 
         int32_t draw_ground = setting_container.is_draw_ground ? 1 : 0;
-        ImGui::Text("  /  Ground:"); ImGui::SameLine();
-        ImGui::RadioButton("Draw", &draw_ground, 1); ImGui::SameLine();
-        ImGui::RadioButton("Hide", &draw_ground, 0);
+        ImGui::Text("  /  地面："); ImGui::SameLine();
+        ImGui::RadioButton("显示##ground_draw", &draw_ground, 1); ImGui::SameLine();
+        ImGui::RadioButton("隐藏##ground_hide", &draw_ground, 0);
         setting_container.is_draw_ground = (draw_ground == 1);
 
         int32_t view_from_axis = setting_container.is_view_from_axis ? 1 : 0;
-        ImGui::Text("View from Axis:"); ImGui::SameLine();
-        ImGui::RadioButton("Draw ", &view_from_axis, 1); ImGui::SameLine();
-        ImGui::RadioButton("Hide ", &view_from_axis, 0);
+        ImGui::Text("轴视角："); ImGui::SameLine();
+        ImGui::RadioButton("显示##axis_draw", &view_from_axis, 1); ImGui::SameLine();
+        ImGui::RadioButton("隐藏##axis_hide", &view_from_axis, 0);
         setting_container.is_view_from_axis = (view_from_axis == 1);
 
         int32_t radio_degree = angle_unit.is_degree ? 1 : 0;
-        ImGui::Text("Unit:"); ImGui::SameLine();
-        ImGui::RadioButton("Radians", &radio_degree, 0); ImGui::SameLine();
-        ImGui::RadioButton("Degrees", &radio_degree, 1);
+        ImGui::Text("单位："); ImGui::SameLine();
+        ImGui::RadioButton("弧度##rad", &radio_degree, 0); ImGui::SameLine();
+        ImGui::RadioButton("角度##deg", &radio_degree, 1);
         angle_unit.is_degree = (radio_degree == 1);
 
         int32_t is_revolution = setting_container.is_camera_revolution ? 1 : 0;
-        ImGui::Text("Camera:"); ImGui::SameLine();
-        ImGui::RadioButton("Revolution", &is_revolution, 1); ImGui::SameLine();
-        ImGui::RadioButton("Free", &is_revolution, 0);
+        ImGui::Text("相机："); ImGui::SameLine();
+        ImGui::RadioButton("环绕##revolution", &is_revolution, 1); ImGui::SameLine();
+        ImGui::RadioButton("自由##free", &is_revolution, 0);
         setting_container.is_camera_revolution = (is_revolution == 1);
 
         int32_t is_normalize_rotation_matrix = setting_container.is_normalize_rotation_matrix ? 1 : 0;
-        ImGui::Text("Normalize Rotation Matrix:"); ImGui::SameLine();
-        ImGui::RadioButton("On", &is_normalize_rotation_matrix, 1); ImGui::SameLine();
-        ImGui::RadioButton("Off", &is_normalize_rotation_matrix, 0);
+        ImGui::Text("归一化旋转矩阵："); ImGui::SameLine();
+        ImGui::RadioButton("开##normalize_on", &is_normalize_rotation_matrix, 1); ImGui::SameLine();
+        ImGui::RadioButton("关##normalize_off", &is_normalize_rotation_matrix, 0);
         setting_container.is_normalize_rotation_matrix = (is_normalize_rotation_matrix == 1);
 
         ImGui::Separator();
-        setting_container.is_reset_view_pressed = ImGui::Button("  Reset View  "); ImGui::SameLine();
-        setting_container.is_reset_value_pressed = ImGui::Button("  Reset Value  ");
+        setting_container.is_reset_view_pressed = ImGui::Button("  重置视图  "); ImGui::SameLine();
+        setting_container.is_reset_value_pressed = ImGui::Button("  重置数值  ");
 
         ImGui::Separator();
-        setting_container.is_update_input_pressed = ImGui::Button("Overwrite input values by the converted values");
+        setting_container.is_update_input_pressed = ImGui::Button("用转换结果覆盖输入值");
         ImGui::Separator();
 
         width_window_setting = ImGui::GetWindowWidth();
@@ -323,17 +328,17 @@ void Ui::Update(Window& window, AngleUnit& angle_unit, InputContainer& input_con
 
     {
         ImGui::SetNextWindowPos(ImVec2(width_window_conversion + width_window_setting, 0));
-        ImGui::Begin("How to use", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+        ImGui::Begin("使用说明", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
         ImGui::Text(
-            "Rotation values input:\n"
-            "  Mouse button drag on the input area: change value\n"
-            "  Ctrl + mouse button click on the input area: enter value\n"
-            "  Mouse button click on a radio button: select representation\n"
-            "View:\n"
-            "  Right mouse button drag: rotate camera\n"
-            "  Middle mouse button drag: move camera (Free mode only)\n"
-            "  Scroll mouse wheel: move forward/backward camera\n"
+            "输入旋转值：\n"
+            "  鼠标拖拽输入区：修改数值\n"
+            "  Ctrl+点击输入区：直接输入\n"
+            "  点击单选按钮：切换表示法\n"
+            "视角控制：\n"
+            "  右键拖拽：旋转相机\n"
+            "  中键拖拽：平移相机（仅自由模式）\n"
+            "  滚轮：前后移动相机\n"
         );
 
         ImGui::End();
